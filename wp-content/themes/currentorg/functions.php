@@ -222,3 +222,21 @@ function current_insert_home_list_widget_area($post, $query) {
 		dynamic_sidebar('homepage-after-third-post');
 }
 add_action('largo_after_home_list_post', 'current_insert_home_list_widget_area', 10, 2);
+
+// Add updated Universal Google Analytics tracking code to head
+
+function universal_analytics_tracking() {
+	?>
+	<script>
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+	ga( 'create', 'UA-6017171-1', 'auto' );
+	ga( 'send', 'pageview' );
+
+	</script>
+	<?php
+}
+add_action( 'wp_head', 'universal_analytics_tracking' );
