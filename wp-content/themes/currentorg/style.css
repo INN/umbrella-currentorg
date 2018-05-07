@@ -414,6 +414,9 @@ body.normal.page .hero {
 .hero .embed-container {
   margin-bottom: 0;
 }
+.single .hero.span12 {
+  margin-left: 0;
+}
 
 /* 2.3 Homepage styles */
 

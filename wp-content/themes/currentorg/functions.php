@@ -4,16 +4,31 @@ define('FEATURED_MEDIA', true);
 
 
 /**
- * Register a custom homepage layout
+ * Include theme files and register a homepage layout
  *
+ * Based off of how Largo loads files: https://github.com/INN/Largo/blob/master/functions.php#L358
+ *
+ * 1. hook function Largo() on after_setup_theme
+ * 2. function Largo() runs Largo::get_instance()
+ * 3. Largo::get_instance() runs Largo::require_files()
+ *
+ * This function is intended to be easily copied between child themes, and for that reason is not prefixed with this child theme's normal prefix.
+ *
+ * @link https://github.com/INN/Largo/blob/master/functions.php#L145
  * @see "homepages/layouts/current.php"
- */
-function current_register_custom_homepage_layout() {
+nc */
+function largo_child_require_files() {
 	// load the layout
-	include_once __DIR__ . '/homepages/layouts/current.php';
-	register_homepage_layout('CurrentHomepage');
+	$includes = array(
+		'/homepages/layouts/current.php',
+		'/inc/custom-taxonomies.php'
+	);
+	foreach ( $includes as $include ) {
+		require_once( get_stylesheet_directory() . $include );
+	}
+	register_homepage_layout( 'CurrentHomepage' );
 }
-add_action('init', 'current_register_custom_homepage_layout', 0);
+add_action( 'init', 'largo_child_require_files', 0 );
 
 
 /**
@@ -51,14 +66,6 @@ function current_register_sidebars() {
 	$sidebars = array();
 
 	$sidebars[] = array(
-		'name' => __('Homepage after third post', 'current'),
-		'id' => 'homepage-after-third-post',
-		'description' => __('A widget area that appears after the third post on the homepage.', 'current'),
-		'before_widget' => '<div class="hp-after-three-widget">' . "\n",
-		'after_widget' => '</div>' . "\n"
-	);
-
-	$sidebars[] = array(
 		'name' => __('Homepage next to second post', 'current'),
 		'id' => 'homepage-next-second-post',
 		'description' => __('A widget area that appears next to the second post on the homepage.', 'current'),
@@ -66,6 +73,22 @@ function current_register_sidebars() {
 		'after_widget' 	=> "</aside>",
 		'before_title' 	=> '<h3 class="widgettitle">',
 		'after_title' 	=> '</h3>',
+	);
+
+	$sidebars[] = array(
+		'name' => __('Homepage after second post', 'current'),
+		'id' => 'homepage-after-second-post',
+		'description' => __('A widget area that appears after the second post on the homepage.', 'current'),
+		'before_widget' => '<div class="hp-after-three-widget">' . "\n",
+		'after_widget' => '</div>' . "\n"
+	);
+
+	$sidebars[] = array(
+		'name' => __('Homepage after third post', 'current'),
+		'id' => 'homepage-after-third-post',
+		'description' => __('A widget area that appears after the third post on the homepage.', 'current'),
+		'before_widget' => '<div class="hp-after-three-widget">' . "\n",
+		'after_widget' => '</div>' . "\n"
 	);
 
 	$sidebars[] = array(
@@ -222,6 +245,17 @@ function current_insert_home_list_widget_area($post, $query) {
 		dynamic_sidebar('homepage-after-third-post');
 }
 add_action('largo_after_home_list_post', 'current_insert_home_list_widget_area', 10, 2);
+
+/**
+ * Insert a widget after the third post on the homepage.
+ *
+ * @since 1.0
+ */
+function current_insert_home_list_widget_area_earlier($post, $query) {
+	if ($query->current_post == 0)
+		dynamic_sidebar('homepage-after-second-post');
+}
+add_action('largo_before_home_list_post', 'current_insert_home_list_widget_area_earlier', 10, 2);
 
 /**
  * wallit paywall, with some Chartbeat logging integration
