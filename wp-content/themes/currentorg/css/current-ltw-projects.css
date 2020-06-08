@@ -316,4 +316,9 @@ html:not(.no-js) .projects-single-layout .projects-single-layout {
 .project-tags [class*=project-category] {
   background: #fff;
 }
+@media (max-width: 770px) {
+  .hide-on-mobile {
+    display: none;
+  }
+}
 /*# sourceMappingURL=css/current-ltw-projects.css.map */
